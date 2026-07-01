@@ -4,6 +4,9 @@ import com.karthik.backend.entity.Task;
 import com.karthik.backend.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 
+import com.karthik.backend.dto.TaskRequestDTO;
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -22,7 +25,14 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
+    public Task createTask(@Valid @RequestBody TaskRequestDTO taskRequestDTO) {
+
+        Task task = new Task();
+
+        task.setTitle(taskRequestDTO.getTitle());
+        task.setDescription(taskRequestDTO.getDescription());
+        task.setStatus(taskRequestDTO.getStatus());
+
         return taskService.saveTask(task);
     }
 
