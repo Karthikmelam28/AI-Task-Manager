@@ -1,11 +1,17 @@
 package com.karthik.backend.controller;
 
+import com.karthik.backend.api.ApiResponse;
+import com.karthik.backend.dto.TaskRequestDTO;
+import com.karthik.backend.dto.TaskResponseDTO;
 import com.karthik.backend.entity.Task;
 import com.karthik.backend.service.TaskService;
-import org.springframework.web.bind.annotation.*;
 
-import com.karthik.backend.dto.TaskRequestDTO;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,11 +25,40 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    // GET ALL TASKS WITH PAGINATION
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public ResponseEntity<ApiResponse<Page<TaskResponseDTO>>> getAllTasks(Pageable pageable) {
+
+        Page<TaskResponseDTO> tasks = taskService.getAllTasks(pageable);
+
+        ApiResponse<Page<TaskResponseDTO>> response =
+                new ApiResponse<>(
+                        true,
+                        "Tasks fetched successfully",
+                        tasks
+                );
+
+        return ResponseEntity.ok(response);
     }
 
+    // GET TASKS BY STATUS
+    @GetMapping("/status/{status}")
+    public ResponseEntity<ApiResponse<List<TaskResponseDTO>>> getTasksByStatus(
+            @PathVariable String status) {
+
+        List<TaskResponseDTO> tasks = taskService.getTasksByStatus(status);
+
+        ApiResponse<List<TaskResponseDTO>> response =
+                new ApiResponse<>(
+                        true,
+                        "Tasks fetched successfully",
+                        tasks
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+    // CREATE TASK
     @PostMapping
     public Task createTask(@Valid @RequestBody TaskRequestDTO taskRequestDTO) {
 
@@ -36,11 +71,14 @@ public class TaskController {
         return taskService.saveTask(task);
     }
 
+    // GET TASK BY ID
     @GetMapping("/{id}")
     public Task getTaskById(@PathVariable Long id) {
+
         return taskService.getTaskById(id);
     }
 
+    // UPDATE TASK
     @PutMapping("/{id}")
     public Task updateTask(@PathVariable Long id,
                            @RequestBody Task task) {
@@ -48,6 +86,7 @@ public class TaskController {
         return taskService.updateTask(id, task);
     }
 
+    // DELETE TASK
     @DeleteMapping("/{id}")
     public String deleteTask(@PathVariable Long id) {
 
