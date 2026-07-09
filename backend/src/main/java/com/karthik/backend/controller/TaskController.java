@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -85,9 +87,9 @@ public class TaskController {
 
         return taskService.updateTask(id, task);
     }
-
-    // DELETE TASK
+    // DELETE TASK (ADMIN ONLY)
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteTask(@PathVariable Long id) {
 
         taskService.deleteTask(id);
