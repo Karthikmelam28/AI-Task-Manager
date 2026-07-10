@@ -2,6 +2,8 @@ package com.karthik.backend.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -22,15 +24,26 @@ public class User {
     @Column(nullable = false)
     private String role;
 
+    // ONE USER -> MANY TASKS
+    @OneToMany(mappedBy = "user")
+    private List<Task> tasks;
+
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, String role) {
+    public User(Long id,
+                String name,
+                String email,
+                String password,
+                String role,
+                List<Task> tasks) {
+
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.tasks = tasks;
     }
 
     public Long getId() {
@@ -71,5 +84,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 }

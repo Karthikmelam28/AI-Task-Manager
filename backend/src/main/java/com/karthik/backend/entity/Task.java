@@ -22,4 +22,9 @@ public class Task {
     private String description;
 
     private String status;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }
